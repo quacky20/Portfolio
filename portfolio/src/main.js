@@ -412,7 +412,7 @@ loadingManager.onLoad = function(){
 
 const loader = new GLTFLoader(loadingManager);
 
-loader.load( '../public/Portfolio7.glb', function ( glb ) {
+loader.load( 'Portfolio7.glb', function ( glb ) {
     glb.scene.traverse((child) => {
         if(intersectObjectsNames.includes(child.name)){
             intersectObjects.push(child)
