@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <link rel="stylesheet" href="src/style.css">
+    <title>Portfolio</title>
+  </head>
+  <body>
+
+    <!-- CANVAS -->
+    <div id="experience">
+      <canvas id="experience-canvas"></canvas>
+    </div>
+    
+    <!-- BUTTONS -->
+    <div class="absolute top-5 left-1/2 -translate-x-1/2 sm:top-5 sm:left-5 sm:-translate-x-0 z-10 flex flex-row gap-3 sm:flex-col">
+      <button id="respawn-btn" class="voxel-button text-white 
+      bg-gradient-to-br from-rose-300 to-orange-300 hover:translate-y-[-2px] active:translate-y-[-2px] hover:shadow-xl transition-transform px-4 py-3 border-2 border-white text-sm font-bold uppercase rounded-lg shadow-[0_4px_0_#f9a250,0_6px_12px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.3)] hidden sm:block">
+        🔄 Respawn
+      </button>
+      <button id="fullscreen-btn" class="voxel-button text-white 
+      bg-gradient-to-br from-rose-300 to-orange-300 hover:translate-y-[-2px] active:translate-y-[-2px] hover:shadow-xl transition-transform px-4 py-3 border-2 border-white text-sm font-bold uppercase rounded-lg shadow-[0_4px_0_#f9a250,0_6px_12px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.3)]">
+        ⛶ Fullscreen
+      </button>
+      <button id="help-btn" class="voxel-button text-white 
+      bg-gradient-to-br from-rose-300 to-orange-300 hover:translate-y-[-2px] active:translate-y-[-2px] hover:shadow-xl transition-transform px-4 py-3 border-2 border-white text-sm font-bold uppercase rounded-lg shadow-[0_4px_0_#f9a250,0_6px_12px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.3)]">
+        ❓Help
+      </button>
+      <button id="settings-btn" class="voxel-button text-white 
+      bg-gradient-to-br from-rose-300 to-orange-300 hover:translate-y-[-2px] active:translate-y-[-2px] hover:shadow-xl transition-transform px-4 py-3 border-2 border-white text-sm font-bold uppercase rounded-lg shadow-[0_4px_0_#f9a250,0_6px_12px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.3)]">
+        ⚙️ Settings
+      </button>
+    </div>
+
+    <!-- INSTRUCTIONS -->
+    <div id="instruction-panel" class="text-white absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 bg-gradient-to-br from-green-500 to-emerald-600 border-2 border-white rounded-lg px-4 py-3 shadow-lg max-w-xs opacity-0 invisible transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]">
+      <h1 class="uppercase font-bold mb-2 tracking-widest text-center">Controls</h1>
+      <p class="text-sm mb-1">🔸WASD / Arrow Keys: Move & Jump</p>
+      <p class="text-sm mb-1">🔸R: Respawn</p>
+      <p class="text-sm">🔸Click objects to interact</p>
+    </div>
+
+    <!-- SETTINGS -->
+    <div id="settings-panel" class="text-white absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 bg-gradient-to-br from-green-500 to-emerald-600 border-2 border-white rounded-lg px-4 py-5 shadow-lg max-w-xs opacity-0 invisible transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]">
+      <h1 class="uppercase font-bold mb-2 tracking-widest text-center">Settings</h1>
+      <p class="text-sm mb-2 tracking-widest text-center">Changing these might result in unexpected behaviour</p>
+      <div class="flex flex-col items-center">
+        <div class="flex flex-row gap-2">
+          <div class="flex flex-col justify-between">
+            <p>Jump distance</p>
+            <p>Jump height</p>
+            <p>Gravity</p>
+          </div>
+          <div class="flex flex-col justify-between">
+            <input type="range" id="jump-dist" min="1" max="20" value="8"></input>
+            <input type="range" id="jump-height" min="1" max="30" value="15"></input>
+            <input type="range" id="gravity" min="1" max="100" value="30"></input>
+          </div>
+          <div class="flex flex-col justify-between">
+            <p id="jump-dist-val"></p>
+            <p id="jump-height-val"></p>
+            <p id="gravity-val"></p>
+          </div>          
+        </div>
+        <div class="mt-4">
+          <button id="restore-btn" class="bg-gradient-to-br from-orange-300 to-red-500 rounded-2xl p-3 border-2 shadow-sm border-white hover:bg-gradient-to-br hover:from-orange-400 hover:to-red-600 hover:shadow-xl transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:translate-y-[-2px]">Restore defaults</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOADING -->
+    <div id="loading-screen" class="absolute h-full w-full bg-amber-100 z-50 flex items-center justify-center opacity-100 visible transition-all duration-3500 ease-[cubic-bezier(0.34,1.56,0.64,1)]">
+      <div class="flex flex-col items-center gap-4">
+        <span class="text-4xl font-semibold text-orange-400">LOADING...</span>
+        <progress id="progress-bar" value="0" max="100" class="w-64 h-4 rounded overflow-hidden [&::-webkit-progress-bar]:bg-gray-200 [&::-webkit-progress-value]:bg-amber-500"></progress>
+      </div>
+    </div>
+
+    <!-- MODAL -->
+    <div id="modal" class=" fixed top-1/2 left-1/2 w-screen h-screen bg-black/20 backdrop-blur-sm z-30 flex items-center justify-center p-5 opacity-0 invisible transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]">
+        <div class="bg-gradient-to-br from-emerald-500 to-emerald-700 border-4 border-white rounded-2xl p-8 max-w-xl w-full text-white shadow-lg transform scale-90 translate-y-12 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]">
+          <div class="flex justify-between items-center mb-6 pb-4 border-b-2 border-white/30">
+            <h1 id="modal-title" class="text-2xl font-bold uppercase tracking-wider text-shadow-md">
+              Project Name
+            </h1>
+            <button id="modal-exit-button" class="bg-gradient-to-br from-lime-500 to-lime-600 border-4 border-white rounded-lg text-white font-bold px-4 py-2 shadow-md hover:translate-y-[-2px] hover:shadow-lg active:translate-y-[-2px] uppercase tracking-wider">
+              Exit
+            </button>
+          </div>
+          <div class="mb-6">
+            <div id="modal-project-description" class="text-base leading-relaxed opacity-95 text-shadow-sm">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Inventore, incidunt ab? Velit vel corrupti atque minus quidem voluptatem, sed labore?
+            </div>
+          </div>
+          <div class="w-full flex justify-center">
+            <a id="modal-visit-button" target="_blank" href="#" class="hidden bg-gradient-to-br from-lime-500 to-lime-600 border-4 border-white rounded-lg text-white font-bold text-lg px-6 py-4 text-center shadow-md hover:translate-y-[-2px] hover:shadow-lg active:translate-y-[-2px] uppercase tracking-wider">Visit Project</a>
+          </div>
+        </div>
+    </div>
+
+    <!-- MOBILE CONTROLS -->
+    <div id="mobile-control" class="fixed bottom-27 left-1/2 z-20 block sm:hidden -translate-x-1/2">
+      <div class="relative w-46 h-46">
+        <button id="mobile-up" class="absolute top-0 left-1/2 transform -translate-x-1/2 w-14 h-14 border-4 border-white 
+          text-white text-lg font-bold active:translate-y-[2px] transition-transform duration-100 rounded-lg shadow-[0_4px_0_#4a4946,0_6px_12px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.3)] active:shadow-none">▲</button>
+
+          <button id="mobile-down" class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-14 h-14 border-4 border-white 
+          text-white text-lg font-bold active:translate-y-[2px] transition-transform duration-100 rounded-lg shadow-[0_4px_0_#4a4946,0_6px_12px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.3)] active:shadow-none">
+          ▼</button>
+
+          <button id="mobile-left" class="absolute left-0 top-1/2 transform -translate-y-1/2 w-14 h-14 border-4 border-white 
+          text-white text-lg font-bold active:translate-y-[calc(-50%+2px)] transition-transform duration-100 rounded-lg shadow-[0_4px_0_#4a4946,0_6px_12px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.3)] active:shadow-none">
+          ◀</button>
+
+          <button id="mobile-right" class="absolute right-0 top-1/2 transform -translate-y-1/2 w-14 h-14 border-4 border-white 
+          text-white text-lg font-bold active:translate-y-[calc(-50%+2px)] transition-transform duration-100 rounded-lg shadow-[0_4px_0_#4a4946,0_6px_12px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.3)] active:shadow-none">
+          ▶</button>
+
+          <button id="mobile-respawn" class="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-14 h-14 border-4 border-white text-white bg-gradient-to-br from-red-400 to-red-600 text-lg font-bold active:translate-y-[calc(-50%+2px)] transition-transform duration-100 rounded-lg shadow-[0_4px_0_#c40000,0_6px_12px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.3)] active:shadow-none">
+          R</button>
+      </div>      
+    </div>
+
+    <!-- CONTACT ME -->
+    <div id="contact-me" class="absolute bottom-5 right-1/2 translate-x-1/2 flex sm:top-5 sm:right-5 sm:-translate-x-0 z-10 sm:flex gap-3 sm:flex-col">
+      <a id="linkedin-btn" class="voxel-button text-white 
+      bg-gradient-to-br from-blue-400 to-blue-600 hover:translate-y-[-2px] active:translate-y-[-2px] hover:shadow-xl transition-transform px-4 py-3 border-2 border-white text-sm font-bold uppercase rounded-lg shadow-[0_4px_0_#2563eb,0_6px_12px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.3)]" href="https://www.linkedin.com/in/arman-bhattacharjee/" target="_blank">
+        <svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+        </svg>
+      </a>
+      <a id="github-btn" class="voxel-button text-white 
+      bg-gradient-to-br from-gray-700 to-gray-900 hover:translate-y-[-2px] active:translate-y-[-2px] hover:shadow-xl transition-transform px-4 py-3 border-2 border-white text-sm font-bold uppercase rounded-lg shadow-[0_4px_0_#374151,0_6px_12px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.3)]" href="https://github.com/quacky20/" target="_blank">
+        <svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+        </svg>
+      </a>
+      <button id="email-btn" class="voxel-button text-white 
+      bg-gradient-to-br from-rose-300 to-orange-400 hover:translate-y-[-2px] active:translate-y-[-2px] hover:shadow-xl transition-transform px-4 py-3 border-2 border-white text-sm font-bold uppercase rounded-lg shadow-[0_4px_0_#f97316,0_6px_12px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.3)] hover:cursor-pointer">
+        <svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-.904.732-1.636 1.636-1.636h3.819l6.545 4.91 6.545-4.91h3.819A1.636 1.636 0 0 1 24 5.457z"/>
+        </svg>
+      </button>
+      <button id="discord-btn" class="voxel-button text-white 
+      bg-gradient-to-br from-indigo-400 to-purple-700 hover:translate-y-[-2px] active:translate-y-[-2px] hover:shadow-xl transition-transform px-4 py-3 border-2 border-white text-sm font-bold uppercase rounded-lg shadow-[0_4px_0_#7c3aed,0_6px_12px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.3)] hover:cursor-pointer">
+        <svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- EMAIL MODAL -->
+    <div id="email-modal" class="text-white absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 bg-gradient-to-br from-rose-300 to-orange-400 border-2 border-white rounded-lg px-4 py-5 shadow-lg max-w-xs opacity-0 invisible transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]">
+      <div class="text-center">
+        <button id="emailModalCloseButton" class="absolute -top-2 -right-2 w-6 h-6 bg-white text-orange-500 rounded-full flex items-center justify-center text-sm font-bold hover:bg-gray-400 transition-colors">
+          ×
+        </button>
+        <h3 class="text-lg font-bold mb-3">Get In Touch!</h3>
+        <button class="w-full bg-white/20 backdrop-blur-sm text-white font-bold py-3 px-4 rounded-lg hover:bg-white/30 transition-all transform hover:scale-105 flex items-center justify-center gap-2 mb-3" id="direct-email">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-.904.732-1.636 1.636-1.636h3.819l6.545 4.91 6.545-4.91h3.819A1.636 1.636 0 0 1 24 5.457z"/>
+          </svg>
+          Open Email App
+        </button>
+        <div class="text-xs">
+          <p class="mb-1">Or copy my email:</p>
+          <p class="font-mono bg-white/20 rounded-lg px-2 py-1 text-xs break-all" id="emailToCopy"></p>
+          <button id="copyButton" class="mt-1 text-white hover:text-gray-200 underline text-xs"> Copy Email</button>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

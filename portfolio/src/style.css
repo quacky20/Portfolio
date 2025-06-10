@@ -1,0 +1,44 @@
+@import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap');
+@import "tailwindcss";
+
+* {
+    box-sizing: border-box;
+    font-family: "Pixelify Sans", sans-serif;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+}
+canvas {
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  touch-action: none; /* optional but useful */
+}
+
+#experience{
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+}
+
+#experience-canvas{
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+#modal{
+    transform: translate(-50%, -50%);
+}
