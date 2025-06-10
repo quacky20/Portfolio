@@ -171,6 +171,29 @@ modal.addEventListener('click', (e) => {
     }
 });
 
+let showKeypad = false
+
+function showKeys(){
+    mobileControls.classList.remove('sm:hidden')
+    mobileControls.classList.add('sm:block')
+    showKeypad = true
+}
+
+function hideKeys(){
+    mobileControls.classList.remove('sm:block')
+    mobileControls.classList.add('sm:hidden')
+    showKeypad = false
+}
+
+document.getElementById('toggle').addEventListener('change', (e) => {
+    if (!showKeypad){
+        showKeys()
+    }
+    else if (showKeypad){
+        hideKeys()
+    }
+})
+
 const jumpDist = document.getElementById('jump-dist')
 const jumpDistVal = document.getElementById('jump-dist-val')
 jumpDistVal.textContent = MOVE_SPEED
@@ -193,6 +216,10 @@ restoreBtn.addEventListener("click", () => {
     jumpDist.value = MOVE_SPEED
     jumpHeight.value = JUMP_HEIGHT
     grav.value = GRAVITY
+    if (showKeypad){
+        hideKeys()
+    }
+    document.getElementById('toggle').checked = false
 })
 
 jumpDist.addEventListener("input", () => {

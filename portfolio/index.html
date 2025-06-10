@@ -63,6 +63,16 @@
             <p id="gravity-val"></p>
           </div>          
         </div>
+        <div class="mt-4 hidden sm:block">
+          <label class="flex items-center cursor-pointer">
+            <span class="mr-3">Enable Keypad</span>
+            <div class="relative">
+              <input type="checkbox" id="toggle" class="sr-only peer" />
+              <div class="w-11 h-6 bg-gray-300 peer-checked:bg-gradient-to-br peer-checked:from-orange-300 peer-checked:to-red-500 rounded-full transition-all shadow-md"></div>
+              <div class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-all peer-checked:translate-x-5"></div>
+            </div>
+          </label>
+        </div>
         <div class="mt-4">
           <button id="restore-btn" class="bg-gradient-to-br from-orange-300 to-red-500 rounded-2xl p-3 border-2 shadow-sm border-white hover:bg-gradient-to-br hover:from-orange-400 hover:to-red-600 hover:shadow-xl transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:translate-y-[-2px]">Restore defaults</button>
         </div>
