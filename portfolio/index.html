@@ -14,27 +14,33 @@
     </div>
     
     <!-- BUTTONS -->
-    <div class="absolute top-5 left-1/2 -translate-x-1/2 sm:top-5 sm:left-5 sm:-translate-x-0 z-10 flex flex-row gap-3 sm:flex-col">
-      <button id="respawn-btn" class="voxel-button text-white 
-      bg-gradient-to-br from-rose-300 to-orange-300 hover:translate-y-[-2px] active:translate-y-[-2px] hover:shadow-xl transition-transform px-4 py-3 border-2 border-white text-sm font-bold uppercase rounded-lg shadow-[0_4px_0_#f9a250,0_6px_12px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.3)] hidden sm:block">
+    <div class="absolute top-5 left-1/2 -translate-x-1/2 sm:top-5 sm:left-5 sm:-translate-x-0 z-10 grid grid-cols-4 gap-3 sm:flex sm:flex-col w-full sm:w-auto px-5 sm:px-0">
+      <button id="respawn-btn" class="voxel-button text-white bg-gradient-to-br from-rose-300 to-orange-300 hover:translate-y-[-2px] active:translate-y-[-2px] hover:shadow-xl transition-transform px-4 py-3 border-2 border-white text-sm font-bold uppercase rounded-lg shadow-[0_4px_0_#f9a250,0_6px_12px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.3)] hidden sm:block">
         🔄 Respawn
       </button>
-      <button id="fullscreen-btn" class="voxel-button text-white 
-      bg-gradient-to-br from-rose-300 to-orange-300 hover:translate-y-[-2px] active:translate-y-[-2px] hover:shadow-xl transition-transform px-4 py-3 border-2 border-white text-sm font-bold uppercase rounded-lg shadow-[0_4px_0_#f9a250,0_6px_12px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.3)]">
-        ⛶ Fullscreen
+      <button id="fullscreen-btn" class="voxel-button text-white bg-gradient-to-br from-rose-300 to-orange-300 hover:translate-y-[-2px] active:translate-y-[-2px] hover:shadow-xl transition-transform px-4 py-3 border-2 border-white text-sm font-bold uppercase rounded-lg shadow-[0_4px_0_#f9a250,0_6px_12px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.3)]">
+        <span class="sm:hidden">⛶</span>
+        <span class="hidden sm:inline" id="fullscreen-text">⛶ Fullscreen</span>
       </button>
-      <button id="help-btn" class="voxel-button text-white 
-      bg-gradient-to-br from-rose-300 to-orange-300 hover:translate-y-[-2px] active:translate-y-[-2px] hover:shadow-xl transition-transform px-4 py-3 border-2 border-white text-sm font-bold uppercase rounded-lg shadow-[0_4px_0_#f9a250,0_6px_12px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.3)]">
-        ❓Help
+      <button id="help-btn" class="voxel-button text-white bg-gradient-to-br from-rose-300 to-orange-300 hover:translate-y-[-2px] active:translate-y-[-2px] hover:shadow-xl transition-transform px-4 py-3 border-2 border-white text-sm font-bold uppercase rounded-lg shadow-[0_4px_0_#f9a250,0_6px_12px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.3)]">
+        <span class="sm:hidden">Help</span>
+        <span class="hidden sm:inline">❓Help</span>
       </button>
-      <button id="settings-btn" class="voxel-button text-white 
-      bg-gradient-to-br from-rose-300 to-orange-300 hover:translate-y-[-2px] active:translate-y-[-2px] hover:shadow-xl transition-transform px-4 py-3 border-2 border-white text-sm font-bold uppercase rounded-lg shadow-[0_4px_0_#f9a250,0_6px_12px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.3)]">
-        ⚙️ Settings
+      <button id="settings-btn" class="voxel-button text-white bg-gradient-to-br from-rose-300 to-orange-300 hover:translate-y-[-2px] active:translate-y-[-2px] hover:shadow-xl transition-transform px-4 py-3 border-2 border-white text-sm font-bold uppercase rounded-lg shadow-[0_4px_0_#f9a250,0_6px_12px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.3)]">
+        <span class="sm:hidden">⚙️</span>
+        <span class="hidden sm:inline">⚙️ Settings</span>
+      </button>
+      <button id="fasttravel-btn" class="voxel-button text-white bg-gradient-to-br from-rose-300 to-orange-300 hover:translate-y-[-2px] active:translate-y-[-2px] hover:shadow-xl transition-transform px-4 py-3 border-2 border-white text-sm font-bold uppercase rounded-lg shadow-[0_4px_0_#f9a250,0_6px_12px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.3)]">
+        <span class="sm:hidden">Travel</span>
+        <span class="hidden sm:inline">📍 Fast Travel</span>
       </button>
     </div>
 
     <!-- INSTRUCTIONS -->
     <div id="instruction-panel" class="text-white absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 bg-gradient-to-br from-green-500 to-emerald-600 border-2 border-white rounded-lg px-4 py-3 shadow-lg max-w-xs opacity-0 invisible transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]">
+      <button id="instructionModalCloseButton" class="absolute -top-2 -right-2 w-6 h-6 bg-white text-emerald-500 rounded-full flex items-center justify-center text-sm font-bold hover:bg-gray-200 transition-colors">
+          ×
+      </button>
       <h1 class="uppercase font-bold mb-2 tracking-widest text-center">Controls</h1>
       <p class="text-sm mb-1">🔸WASD / Arrow Keys: Move & Jump</p>
       <p class="text-sm mb-1">🔸R: Respawn</p>
@@ -43,6 +49,9 @@
 
     <!-- SETTINGS -->
     <div id="settings-panel" class="text-white absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 bg-gradient-to-br from-green-500 to-emerald-600 border-2 border-white rounded-lg px-4 py-5 shadow-lg max-w-xs opacity-0 invisible transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]">
+      <button id="settingsModalCloseButton" class="absolute -top-2 -right-2 w-6 h-6 bg-white text-emerald-500 rounded-full flex items-center justify-center text-sm font-bold hover:bg-gray-200 transition-colors">
+          ×
+      </button>
       <h1 class="uppercase font-bold mb-2 tracking-widest text-center">Settings</h1>
       <p class="text-sm mb-2 tracking-widest text-center">Changing these might result in unexpected behaviour</p>
       <div class="flex flex-col items-center">
@@ -51,16 +60,19 @@
             <p>Jump distance</p>
             <p>Jump height</p>
             <p>Gravity</p>
+            <p>Zoom</p>
           </div>
           <div class="flex flex-col justify-between">
             <input type="range" id="jump-dist" min="1" max="20" value="8"></input>
             <input type="range" id="jump-height" min="1" max="30" value="15"></input>
             <input type="range" id="gravity" min="1" max="100" value="30"></input>
+            <input type="range" id="zoom" min="1.5" max="4" value="2.3" step="0.1"></input>
           </div>
           <div class="flex flex-col justify-between">
             <p id="jump-dist-val"></p>
             <p id="jump-height-val"></p>
             <p id="gravity-val"></p>
+            <p id="zoom-val"></p>
           </div>          
         </div>
         <div class="mt-4 hidden sm:block">
@@ -163,7 +175,7 @@
     <!-- EMAIL MODAL -->
     <div id="email-modal" class="text-white absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 bg-gradient-to-br from-rose-300 to-orange-400 border-2 border-white rounded-lg px-4 py-5 shadow-lg max-w-xs opacity-0 invisible transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]">
       <div class="text-center">
-        <button id="emailModalCloseButton" class="absolute -top-2 -right-2 w-6 h-6 bg-white text-orange-500 rounded-full flex items-center justify-center text-sm font-bold hover:bg-gray-400 transition-colors">
+        <button id="emailModalCloseButton" class="absolute -top-2 -right-2 w-6 h-6 bg-white text-orange-500 rounded-full flex items-center justify-center text-sm font-bold hover:bg-gray-200 transition-colors">
           ×
         </button>
         <h3 class="text-lg font-bold mb-3">Get In Touch!</h3>
@@ -178,6 +190,18 @@
           <p class="font-mono bg-white/20 rounded-lg px-2 py-1 text-xs break-all" id="emailToCopy"></p>
           <button id="copyButton" class="mt-1 text-white hover:text-gray-200 underline text-xs"> Copy Email</button>
         </div>
+      </div>
+    </div>
+
+    <!-- FAST TRAVEL -->
+    <div id="fasttravel-modal" class="text-white absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 bg-gradient-to-br from-teal-300 to-lime-400 border-2 border-white rounded-lg px-4 py-5 shadow-lg max-w-xs opacity-0 invisible transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] w-1/2 pointer-events-none">
+      <button id="fastTravelModalCloseButton" class="absolute -top-2 -right-2 w-6 h-6 bg-white text-teal-500 rounded-full flex items-center justify-center text-sm font-bold hover:bg-gray-200 transition-colors">
+          ×
+      </button>
+      <h3 class="text-lg font-bold mb-3 text-center">Fast Travel</h3>
+      <div class="flex flex-col items-center justify-between">
+        <button id="skillsFT" class="w-full bg-white/20 backdrop-blur-sm text-white font-bold py-3 px-4 rounded-lg hover:bg-slate-200/30 transition-all transform hover:scale-105 flex items-center justify-center gap-2 mb-3 shadow-md hover:shadow-lg">Skills</button>
+        <button id="projectsFT" class="w-full bg-white/20 backdrop-blur-sm text-white font-bold py-3 px-4 rounded-lg hover:bg-slate-200/30 transition-all transform hover:scale-105 flex items-center justify-center gap-2 shadow-md hover:shadow-lg">Projects</button>
       </div>
     </div>
     <script type="module" src="/src/main.js"></script>

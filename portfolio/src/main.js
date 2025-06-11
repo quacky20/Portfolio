@@ -23,11 +23,16 @@ const CAPSULE_HEIGHT = 1
 let JUMP_HEIGHT = 15
 let MOVE_SPEED = 8
 
+let ZOOM_VALUE = 2.3
+
 let character = {
     instance: null,
     isMoving: false,
     spawnPoint: new THREE.Vector3(),
 }
+
+const skillsPosition = new THREE.Vector3(-62, 0, -32)
+const projectsPosition = new THREE.Vector3(3, 0, -76)
 
 let dog = {
     instance: null,
@@ -213,6 +218,9 @@ jumpHeightVal.textContent = JUMP_HEIGHT
 const grav = document.getElementById('gravity')
 const gravVal = document.getElementById('gravity-val')
 gravVal.textContent = GRAVITY
+const zoomer = document.getElementById('zoom')
+const zoomVal = document.getElementById('zoom-val')
+zoomVal.textContent = ZOOM_VALUE
 
 const restoreBtn = document.getElementById('restore-btn')
 
@@ -220,12 +228,19 @@ restoreBtn.addEventListener("click", () => {
     MOVE_SPEED = 8
     JUMP_HEIGHT = 15
     GRAVITY = 30
+    ZOOM_VALUE = 2.3
     jumpDistVal.textContent = MOVE_SPEED
     jumpHeightVal.textContent = JUMP_HEIGHT
     gravVal.textContent = GRAVITY
+    zoomVal.textContent = ZOOM_VALUE
     jumpDist.value = MOVE_SPEED
     jumpHeight.value = JUMP_HEIGHT
     grav.value = GRAVITY
+    zoomer.value = ZOOM_VALUE
+
+    camera.zoom = ZOOM_VALUE
+    camera.updateProjectionMatrix()
+    
     if (showKeypad){
         hideKeys()
     }
@@ -248,16 +263,27 @@ grav.addEventListener("input", () => {
     gravVal.textContent = GRAVITY
 })
 
+zoomer.addEventListener("input", () => {
+    ZOOM_VALUE = zoomer.value
+    zoomVal.textContent = ZOOM_VALUE
+
+    camera.zoom = ZOOM_VALUE
+    camera.updateProjectionMatrix()
+})
+
 const respawnBtn = document.getElementById('respawn-btn');
 const fullscreenBtn = document.getElementById('fullscreen-btn');
 const helpBtn = document.getElementById('help-btn')
 const settingsBtn = document.getElementById('settings-btn')
+const fasttravelBtn = document.getElementById('fasttravel-btn')
 const instructionsPanel = document.getElementById('instruction-panel')
 const settingsPanel = document.getElementById('settings-panel')
+const fasttravelModal = document.getElementById('fasttravel-modal')
 
 let showInstructions = false
 let showSettings = false
 let showEmail = false
+let showfasttravel = false
 
 helpBtn.addEventListener('click', (e) => {
     if (!showInstructions){
@@ -270,6 +296,11 @@ helpBtn.addEventListener('click', (e) => {
             emailModal.classList.remove("opacity-100", "visible", "pointer-events-auto");
             emailModal.classList.add("opacity-0", "invisible", "pointer-events-none");
         }
+        if(showfasttravel){
+            fasttravelModal.classList.remove("opacity-100", "visible", "pointer-events-auto");
+            fasttravelModal.classList.add("opacity-0", "invisible", "pointer-events-none");
+            showfasttravel = false
+        }   
         instructionsPanel.classList.remove("opacity-0", "invisible", "pointer-events-none");
         instructionsPanel.classList.add("opacity-100", "visible", "pointer-events-auto");
         showInstructions = true
@@ -293,6 +324,11 @@ settingsBtn.addEventListener('click', (e) => {
             emailModal.classList.remove("opacity-100", "visible", "pointer-events-auto");
             emailModal.classList.add("opacity-0", "invisible", "pointer-events-none");
         }
+        if(showfasttravel){
+            fasttravelModal.classList.remove("opacity-100", "visible", "pointer-events-auto");
+            fasttravelModal.classList.add("opacity-0", "invisible", "pointer-events-none");
+            showfasttravel = false
+        }
         settingsPanel.classList.remove("opacity-0", "invisible", "pointer-events-none");
         settingsPanel.classList.add("opacity-100", "visible", "pointer-events-auto");
         showSettings = true
@@ -304,6 +340,51 @@ settingsBtn.addEventListener('click', (e) => {
     }
 });
 
+document.getElementById('instructionModalCloseButton').addEventListener('click', () => {
+    instructionsPanel.classList.remove("opacity-100", "visible", "pointer-events-auto");
+    instructionsPanel.classList.add("opacity-0", "invisible", "pointer-events-none");
+    showInstructions = false
+})
+
+document.getElementById('settingsModalCloseButton').addEventListener('click', () => {
+    settingsPanel.classList.remove("opacity-100", "visible", "pointer-events-auto");
+    settingsPanel.classList.add("opacity-0", "invisible", "pointer-events-none");
+    showSettings = false
+})
+
+fasttravelBtn.addEventListener('click', () => {
+    if (!showfasttravel){
+        if (showInstructions){
+            instructionsPanel.classList.remove("opacity-100", "visible", "pointer-events-auto");
+            instructionsPanel.classList.add("opacity-0", "invisible", "pointer-events-none");
+            showInstructions = false
+        }
+        if (showSettings){
+            settingsPanel.classList.remove("opacity-100", "visible", "pointer-events-auto");
+            settingsPanel.classList.add("opacity-0", "invisible", "pointer-events-none");
+            showSettings = false
+        }
+        if(showEmail){
+            emailModal.classList.remove("opacity-100", "visible", "pointer-events-auto");
+            emailModal.classList.add("opacity-0", "invisible", "pointer-events-none");
+        }
+        fasttravelModal.classList.remove("opacity-0", "invisible", "pointer-events-none");
+        fasttravelModal.classList.add("opacity-100", "visible", "pointer-events-auto");
+        showfasttravel = true
+    }
+    else{
+        fasttravelModal.classList.remove("opacity-100", "visible", "pointer-events-auto");
+        fasttravelModal.classList.add("opacity-0", "invisible", "pointer-events-none");
+        showfasttravel = false
+    }
+})
+
+document.getElementById('fastTravelModalCloseButton').addEventListener('click', () => {
+    fasttravelModal.classList.remove("opacity-100", "visible", "pointer-events-auto");
+    fasttravelModal.classList.add("opacity-0", "invisible", "pointer-events-none");
+    showfasttravel = false
+})
+
 respawnBtn.addEventListener('click', (e) => {
     respawnCharacter()
 })
@@ -313,14 +394,34 @@ fullscreenBtn.addEventListener('click', (e) => {
         document.documentElement.requestFullscreen().catch(err => {
             console.log('Fullscreen failed:', err)
         })
-        fullscreenBtn.textContent = '🗗 Exit Fullscreen'
+        document.getElementById('fullscreen-text').textContent = '🗗 Exit Fullscreen'
     }
     else{
         document.exitFullscreen().catch(err => {
             console.log('Exit Fullscreen failed:', err)
         })
-        fullscreenBtn.textContent = '⛶ Fullscreen'
+        document.getElementById('fullscreen-text').textContent = '⛶ Fullscreen'
     }
+})
+
+document.getElementById('skillsFT').addEventListener('click', () => {
+    character.instance.position.copy(new THREE.Vector3(skillsPosition.x, character.spawnPoint.y, skillsPosition.z)).add(new THREE.Vector3(0, 10, 0))
+    playerCollider.start.copy(new THREE.Vector3(skillsPosition.x, character.spawnPoint.y, skillsPosition.z)).add(new THREE.Vector3(0, CAPSULE_RADIUS, 0)).add(new THREE.Vector3(0, 5, 0))
+    playerCollider.end.copy(new THREE.Vector3(skillsPosition.x, character.spawnPoint.y, skillsPosition.z)).add(new THREE.Vector3(0, CAPSULE_HEIGHT, 0)).add(new THREE.Vector3(0, 5, 0))
+    targetRotation = Math.PI
+
+    playerVelocity.set(0, 0, 0)
+    character.isMoving = false
+})
+
+document.getElementById('projectsFT').addEventListener('click', () => {
+    character.instance.position.copy(new THREE.Vector3(projectsPosition.x, character.spawnPoint.y, projectsPosition.z)).add(new THREE.Vector3(0, 10, 0))
+    playerCollider.start.copy(new THREE.Vector3(projectsPosition.x, character.spawnPoint.y, projectsPosition.z)).add(new THREE.Vector3(0, CAPSULE_RADIUS, 0)).add(new THREE.Vector3(0, 5, 0))
+    playerCollider.end.copy(new THREE.Vector3(projectsPosition.x, character.spawnPoint.y, projectsPosition.z)).add(new THREE.Vector3(0, CAPSULE_HEIGHT, 0)).add(new THREE.Vector3(0, 5, 0))
+    targetRotation = Math.PI / 2
+
+    playerVelocity.set(0, 0, 0)
+    character.isMoving = false
 })
 
 const DISCORD_USERNAME = "quacky_._"
@@ -782,6 +883,13 @@ function animate() {
 	}
 
 	renderer.render( scene, camera );
+
+    // if(character.instance){
+    //     console.log(character.instance.position)
+    // }
+    // else{
+    //     return
+    // }
 
     // console.log(camera.position)
     // console.log(camera.zoom)
