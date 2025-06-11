@@ -29,6 +29,14 @@ let character = {
     spawnPoint: new THREE.Vector3(),
 }
 
+let dog = {
+    instance: null,
+    isJumping: false,
+}
+
+const DOG_JUMP_HEIGHT = 8
+const JUMP_DURATION = 0.5
+
 const colliderOctree = new Octree()
 const playerCollider = new Capsule(
     new THREE.Vector3(0, CAPSULE_RADIUS, 0),
@@ -121,14 +129,16 @@ const modalContent = {
         title: "You are SO annoying!"
     },
     "Instagram":{
-        title: "Instagram",
-        linkText: "Visit my Instagram",
-        link: "https://instagram.com"
+        title: "Beyond Code",
+        content: "When I'm not building tech, I explore the world through my lens. Photography helps me slow down, notice the little things, and capture stories in moments.\nCheck out my work on Instagram",
+        linkText: "Visit Account",
+        link: "https://www.instagram.com/shutter.k.o.n_._/"
     },
     "Youtube":{
-        title: "Youtube",
-        linkText: "Check out my channel",
-        link: "https://youtube.com"
+        title: "Visual Storytelling",
+        content: "I also love crafting cinematic content — from B-rolls and stop motion to short edits that blend sound and movement. It's another way I express creativity and emotion through visuals.\nWatch my edits on Youtube",
+        linkText: "Visit Channel",
+        link: "https://www.youtube.com/@quacky69"
     },
 }
 
@@ -465,6 +475,9 @@ loader.load( 'Portfolio7.glb', function ( glb ) {
             colliderOctree.fromGraphNode(child)
             child.visible = false
         }
+        if (child.name === "Dog"){
+            dog.instance = child
+        }
     })
     scene.add( glb.scene );
     // console.log(glb.scene)
@@ -661,6 +674,69 @@ function onClick(event){
     // const intersects = raycaster.intersectObjects(intersectObjects, true);
     
     // console.log(intersectObject)
+
+    if (intersectObject === "Dog"){
+        if (dog.isJumping) return
+
+        dog.isJumping = true
+
+        const originalY = dog.instance.position.y
+        const originalScale = {
+            x: dog.instance.scale.x,
+            y: dog.instance.scale.y,
+            z: dog.instance.scale.z,
+        }
+
+        const t1 = gsap.timeline({
+            onComplete: () => {
+                dog.isJumping = false
+            }
+        })
+
+        .to(dog.instance.scale, {
+            x: originalScale.x * 1.3,
+            y: originalScale.y * 0.7,
+            z: originalScale.z * 1.3,
+            duration: 0.1,
+            ease: "power2.out"
+        })
+
+        .to([dog.instance.position, dog.instance.scale], {
+            y: originalY + DOG_JUMP_HEIGHT,
+            duration: JUMP_DURATION * 0.6,
+            ease: "power2.out",
+        }, 0.1)
+
+        .to(dog.instance.scale, {
+            x: originalScale.x * 0.8,
+            y: originalScale.y * 1.2,
+            z: originalScale.z * 0.8,
+            duration: JUMP_DURATION * 0.6,
+            ease: "power2.out"
+        }, 0.1)
+
+        .to(dog.instance.position, {
+            y: originalY,
+            duration: JUMP_DURATION * 0.4,
+            ease: "power2.in"
+        })
+
+        .to(dog.instance.scale, {
+            x: originalScale.x * 1.2,
+            y: originalScale.y * 0.8,
+            z: originalScale.z * 1.2,
+            duration: 0.1,
+            ease: "power2.out"
+        }, "-=0.1")
+
+        .to(dog.instance.scale, {
+            x: originalScale.x,
+            y: originalScale.y,
+            z: originalScale.z,
+            duration: 0.2,
+            ease: "elastic.out(1, 0.5)"
+        })
+    }
 
     if (intersectObject !== ""){
         showModal(intersectObject)
