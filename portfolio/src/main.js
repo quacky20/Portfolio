@@ -23,7 +23,6 @@ class AudioManager {
 
             click: '/audio/click.mp3',
             jump: '/audio/jump-edited.mp3',
-            land: null,
             interact: '/audio/interact.mp3',
             modal_open: '/audio/modal-open.mp3',
             modal_close: '/audio/modal-close.mp3',
@@ -854,7 +853,6 @@ function handleResize(){
 
 function playerCollisions(){
     const result = colliderOctree.capsuleIntersect(playerCollider)
-    const wasOnFloor = playerOnFloor
     playerOnFloor = false
 
     if (result) {
@@ -862,10 +860,6 @@ function playerCollisions(){
         playerCollider.translate(result.normal.multiplyScalar(result.depth))
 
         if(playerOnFloor) {
-            if (!wasOnFloor && character.isMoving) {
-                audioManager.playSound('land', 0.4, 0.8 + Math.random() * 0.4);
-            }
-
             character.isMoving = false
             playerVelocity.x = 0
             playerVelocity.z = 0
@@ -1044,7 +1038,6 @@ function onClick(event){
         const t1 = gsap.timeline({
             onComplete: () => {
                 dog.isJumping = false
-                audioManager.playSound('land', 0.6)
             }
         })
 
