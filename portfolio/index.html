@@ -65,25 +65,38 @@
             <p>Jump height</p>
             <p>Gravity</p>
             <p>Zoom</p>
+            <p>Volume</p>
           </div>
           <div class="flex flex-col justify-between">
             <input type="range" id="jump-dist" min="1" max="20" value="8"></input>
             <input type="range" id="jump-height" min="1" max="30" value="15"></input>
             <input type="range" id="gravity" min="1" max="100" value="30"></input>
             <input type="range" id="zoom" min="1.5" max="4" value="2.3" step="0.1"></input>
+            <input type="range" id="volume" min="0" max="100" value="70"></input>
           </div>
           <div class="flex flex-col justify-between">
             <p id="jump-dist-val"></p>
             <p id="jump-height-val"></p>
             <p id="gravity-val"></p>
             <p id="zoom-val"></p>
+            <p id="volume-val"></p>
           </div>          
         </div>
         <div class="mt-4 hidden sm:block">
           <label class="flex items-center cursor-pointer">
             <span class="mr-3">Enable Keypad</span>
             <div class="relative">
-              <input type="checkbox" id="toggle" class="sr-only peer" />
+              <input type="checkbox" id="key-toggle" class="sr-only peer" />
+              <div class="w-11 h-6 bg-gray-300 peer-checked:bg-gradient-to-br peer-checked:from-orange-300 peer-checked:to-red-500 rounded-full transition-all shadow-md"></div>
+              <div class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-all peer-checked:translate-x-5"></div>
+            </div>
+          </label>
+        </div>
+        <div class="mt-4">
+          <label class="flex items-center cursor-pointer">
+            <span class="mr-3">Enable Sound</span>
+            <div class="relative">
+              <input type="checkbox" id="sound-toggle" class="sr-only peer" checked="true"/>
               <div class="w-11 h-6 bg-gray-300 peer-checked:bg-gradient-to-br peer-checked:from-orange-300 peer-checked:to-red-500 rounded-full transition-all shadow-md"></div>
               <div class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-all peer-checked:translate-x-5"></div>
             </div>

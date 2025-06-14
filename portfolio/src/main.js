@@ -7,6 +7,201 @@ import { gsap } from "gsap";
 import { Octree } from "three/addons/math/Octree.js"
 import { Capsule } from "three/addons/math/Capsule.js"
 
+class AudioManager {
+    constructor() {
+        this.audioContext = null
+        this.sounds = {}
+        this.backgroundMusic = null
+        this.masterVolume = 0.7
+        this.sfxVolume = 1.2
+        this.musicVolume = 0.2
+        this.isInitiated = false
+        this.isMuted = false
+
+        this.audioFiles = {
+            background: '../audio/ambient-background.mp3',
+
+            click: '../audio/click.mp3',
+            jump: '../audio/jump-edited.mp3',
+            land: null,
+            interact: '../audio/interact.mp3',
+            modal_open: '../audio/modal-open.mp3',
+            modal_close: '../audio/modal-close.mp3',
+            dog_jump: '../audio/dog-jump.mp3'
+        }
+    }
+
+    async init() {
+        try{
+            this.audioContext = new window.AudioContext()
+
+            await this.loadSounds()
+
+            this.isInitiated = true
+            console.log('Audio system initialized')
+
+            this.playBackgroundMusic()
+            }
+            catch(error){
+                console.warn('Audio initialization failed: ', error)
+            }
+    }
+
+    async loadSounds() {
+        const loadPromises = Object.entries(this.audioFiles).map(async ([key, url]) => {
+            try{
+                const response = await fetch(url)
+                const arrayBuffer = await response.arrayBuffer()
+                const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer)
+                this.sounds[key] = audioBuffer
+            }
+            catch(error){
+                console.warn(`Failed to load audio: ${url}`, error)
+
+                this.sounds[key] = this.createSilentBuffer()
+            }
+        })
+
+        await Promise.all(loadPromises)
+    }
+
+    createSilentBuffer() {
+        const buffer = this.audioContext.createBuffer(1, this.audioContext.sampleRate * 0.1, this.audioContext.sampleRate)
+        return buffer
+    }
+
+    playSound(soundname, volume = 1, playbackRate = 1, loop = false){
+        if (!this.isInitiated || this.isMuted || !this.sounds[soundname]) return null
+
+        try{
+            const source = this.audioContext.createBufferSource()
+            const gainNode = this.audioContext.createGain()
+
+            source.buffer = this.sounds[soundname]
+            source.loop = loop
+            source.playbackRate.setValueAtTime(playbackRate, this.audioContext.currentTime)
+
+            gainNode.gain.setValueAtTime(volume * this.sfxVolume * this.masterVolume, this.audioContext.currentTime)
+
+            source.connect(gainNode)
+            gainNode.connect(this.audioContext.destination)
+
+            source.start()
+
+            return source
+        }
+        catch(error){
+            console.warn('Error playing sound:', error)
+            return null
+        }
+    }
+
+    playBackgroundMusic(){
+        if (!this.isInitiated || this.isMuted || !this.sounds.background) return
+
+        try{
+            if (this.backgroundMusic) {
+                this.backgroundMusic.stop()
+            }
+
+            const source = this.audioContext.createBufferSource()
+            const gainNode = this.audioContext.createGain()
+
+            source.buffer = this.sounds.background
+            source.loop = true
+
+            gainNode.gain.setValueAtTime(0, this.audioContext.currentTime)
+            gainNode.gain.linearRampToValueAtTime(this.musicVolume * this.masterVolume, this.audioContext.currentTime + 2)
+
+            source.connect(gainNode)
+            gainNode.connect(this.audioContext.destination)
+
+            source.start()
+            this.backgroundMusic = source
+            this.backgroundMusicGain  = gainNode
+        }
+        catch(error) {
+            console.warn('Error playing background music:', error)
+        }
+    }
+
+    stopBackgroundMusic() {
+        if (this.backgroundMusic) {
+            this.backgroundMusicGain.gain.linearRampToValueAtTime(0, this.audioContext.currentTime + 1)
+            setTimeout(() => {
+                if (this.backgroundMusic) {
+                    this.backgroundMusic.stop()
+                    this.backgroundMusic = null
+                }
+            }, 1000)
+        }
+    }
+
+    setMasterVolume(volume) {
+        this.masterVolume = Math.max(0, Math.min(1, volume))
+        if (this.backgroundMusicGain) {
+            this.backgroundMusicGain.gain.setValueAtTime(this.musicVolume * this.masterVolume, this.audioContext.currentTime)
+        }
+    }
+
+    toggleMute() {
+        this.isMuted = !this.isMuted
+        if (this.isMuted){
+            this.stopBackgroundMusic()
+        }
+        else{
+            this.playBackgroundMusic()
+        }
+
+        return this.isMuted
+    }
+
+    playSound3D(soundName, position, volume = 1){
+        if (!this.isInitiated || this.isMuted || !this.sounds[soundName]) return null
+
+        try{
+            const source = this.audioContext.createBufferSource()
+            const panner = this.audioContext.createPanner()
+            const gainNode = this.audioContext.createGain()
+
+            source.buffer = this.sounds[soundName]
+
+            panner.setPosition(position.x, position.y, position.z)
+            panner.setOrientation(0, 0, -1)
+            panner.panningModel = 'HRTF'
+            panner.distanceModel = 'inverse'
+            panner.refDistance = 1
+            panner.maxDistance = 100
+            panner.rolloffFactor = 1
+
+            gainNode.gain.setValueAtTime(volume * this.sfxVolume * this.masterVolume, this.audioContext.currentTime)
+
+            source.connect(panner)
+            panner.connect(gainNode)
+            gainNode.connect(this.audioContext.destination)
+
+            source.start()
+
+            return source
+        }
+        catch(error){
+            console.warn('Error playing 3D sound:', error)
+            return null
+        }
+    }
+}
+
+const audioManager = new AudioManager()
+
+let audioInitiated = false
+
+function initAudioOnInteraction(){
+    if (!audioInitiated) {
+        audioManager.init()
+        audioInitiated = true
+    }
+}
+
 const scene = new THREE.Scene();
 const canvas = document.getElementById("experience-canvas")
 const sizes = {
@@ -156,6 +351,8 @@ const modalVisitButton = document.querySelector("#modal-visit-button")
 function showModal(id){
     const content = modalContent[id]
     if (content){
+        audioManager.playSound('modal_open', 0.6)
+
         modalTitle.textContent = content.title
         modalDescription.textContent = content.content
         // modal.classList.toggle("hidden")
@@ -175,6 +372,7 @@ function showModal(id){
 }
 
 function hideModal(){
+    audioManager.playSound('modal_close', 0.5)
     // modal.classList.toggle("hidden")
     modal.classList.remove("opacity-100", "visible", "pointer-events-auto");
     modal.classList.add("opacity-0", "invisible", "pointer-events-none");
@@ -200,13 +398,20 @@ function hideKeys(){
     showKeypad = false
 }
 
-document.getElementById('toggle').addEventListener('change', (e) => {
+document.getElementById('key-toggle').addEventListener('change', (e) => {
     if (!showKeypad){
         showKeys()
     }
     else if (showKeypad){
         hideKeys()
     }
+})
+
+document.getElementById('sound-toggle').addEventListener('change', (e) => {
+    initAudioOnInteraction();
+    const isMuted = audioManager.toggleMute();
+    document.getElementById('mute-btn').textContent = isMuted ? '🔇' : '🔊';
+    audioManager.playSound('click', 0.5);
 })
 
 const jumpDist = document.getElementById('jump-dist')
@@ -221,6 +426,9 @@ gravVal.textContent = GRAVITY
 const zoomer = document.getElementById('zoom')
 const zoomVal = document.getElementById('zoom-val')
 zoomVal.textContent = ZOOM_VALUE
+const volumeSlider = document.getElementById('volume')
+const volumeVal = document.getElementById('volume-val')
+volumeVal.textContent = 70
 
 const restoreBtn = document.getElementById('restore-btn')
 
@@ -233,10 +441,12 @@ restoreBtn.addEventListener("click", () => {
     jumpHeightVal.textContent = JUMP_HEIGHT
     gravVal.textContent = GRAVITY
     zoomVal.textContent = ZOOM_VALUE
+    volumeVal.textContent = 70
     jumpDist.value = MOVE_SPEED
     jumpHeight.value = JUMP_HEIGHT
     grav.value = GRAVITY
     zoomer.value = ZOOM_VALUE
+    volumeSlider.value = 70
 
     camera.zoom = ZOOM_VALUE
     camera.updateProjectionMatrix()
@@ -244,7 +454,12 @@ restoreBtn.addEventListener("click", () => {
     if (showKeypad){
         hideKeys()
     }
-    document.getElementById('toggle').checked = false
+    document.getElementById('key-toggle').checked = false
+
+    if(audioManager.isMuted){
+        audioManager.toggleMute()
+    }
+    document.getElementById('sound-toggle').checked = true
 })
 
 jumpDist.addEventListener("input", () => {
@@ -269,6 +484,12 @@ zoomer.addEventListener("input", () => {
 
     camera.zoom = ZOOM_VALUE
     camera.updateProjectionMatrix()
+})
+
+volumeSlider.addEventListener("input", () => {
+    initAudioOnInteraction();
+    audioManager.setMasterVolume(volumeSlider.value / 100);
+    volumeVal.textContent = volumeSlider.value
 })
 
 const respawnBtn = document.getElementById('respawn-btn');
@@ -634,6 +855,7 @@ function handleResize(){
 
 function playerCollisions(){
     const result = colliderOctree.capsuleIntersect(playerCollider)
+    const wasOnFloor = playerOnFloor
     playerOnFloor = false
 
     if (result) {
@@ -641,6 +863,10 @@ function playerCollisions(){
         playerCollider.translate(result.normal.multiplyScalar(result.depth))
 
         if(playerOnFloor) {
+            if (!wasOnFloor && character.isMoving) {
+                audioManager.playSound('land', 0.4, 0.8 + Math.random() * 0.4);
+            }
+
             character.isMoving = false
             playerVelocity.x = 0
             playerVelocity.z = 0
@@ -681,39 +907,52 @@ function respawnCharacter(){
 }
 
 function onkeydown(event) {
+    initAudioOnInteraction()
+
     if (event.key.toLowerCase() === "r"){
+        audioManager.playSound('click', 0.6)
         respawnCharacter()
         return
     }
 
     if (character.isMoving) return
 
+    let moved = false
+
     switch(event.key.toLowerCase()){
         case "w":
         case "arrowup":
             playerVelocity.z -= MOVE_SPEED
             targetRotation = Math.PI/2
+            moved = true
             break
         case "s":
         case "arrowdown":
             playerVelocity.z += MOVE_SPEED
             targetRotation = -Math.PI/2
+            moved = true
             break
         case "a":
         case "arrowleft":
             playerVelocity.x -= MOVE_SPEED
             targetRotation = Math.PI
+            moved = true
             break
         case "d":
         case "arrowright":
             playerVelocity.x += MOVE_SPEED
             targetRotation = 0
+            moved = true
             break
         default:
             return
     }
-    playerVelocity.y = JUMP_HEIGHT
-    character.isMoving = true
+    
+    if (moved) {
+        audioManager.playSound('jump', 0.8, 0.9 + Math.random() * 0.2)
+        playerVelocity.y = JUMP_HEIGHT
+        character.isMoving = true
+    }
 }
 
 let lastClickTime = 0
@@ -724,6 +963,7 @@ const respawnMobile = document.getElementById('mobile-respawn')
 
 mobileControls.addEventListener('click', (event) => {
     event.preventDefault()
+    initAudioOnInteraction()
 
     const now = Date.now()
     if (now - lastClickTime < CLICK_DELAY){
@@ -731,28 +971,38 @@ mobileControls.addEventListener('click', (event) => {
     }
     lastClickTime = now
 
+    let moved = false
+
     switch(event.target.id){
         case 'mobile-up':
             playerVelocity.z -= MOVE_SPEED
             targetRotation = Math.PI/2
+            moved = true
             break
         case 'mobile-down':
             playerVelocity.z += MOVE_SPEED
             targetRotation = -Math.PI/2
+            moved = true
             break
         case 'mobile-left':
             playerVelocity.x -= MOVE_SPEED
             targetRotation = Math.PI
+            moved = true
             break
         case 'mobile-right':
             playerVelocity.x += MOVE_SPEED
             targetRotation = 0
+            moved = true
             break
         default:
             return
     }
-    playerVelocity.y = JUMP_HEIGHT
-    character.isMoving = true
+    
+    if (moved) {
+        audioManager.playSound('jump', 0.8, 0.9 + Math.random() * 0.2);
+        playerVelocity.y = JUMP_HEIGHT
+        character.isMoving = true
+    }
 })
 
 respawnMobile.addEventListener('click', () => {
@@ -760,6 +1010,8 @@ respawnMobile.addEventListener('click', () => {
 })
 
 function onClick(event){
+    initAudioOnInteraction()
+
     const rect = canvas.getBoundingClientRect();
   
     const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
@@ -779,6 +1031,8 @@ function onClick(event){
     if (intersectObject === "Dog"){
         if (dog.isJumping) return
 
+        audioManager.playSound('dog_jump', 0.8, 1.2)
+
         dog.isJumping = true
 
         const originalY = dog.instance.position.y
@@ -791,6 +1045,7 @@ function onClick(event){
         const t1 = gsap.timeline({
             onComplete: () => {
                 dog.isJumping = false
+                audioManager.playSound('land', 0.6)
             }
         })
 
@@ -840,7 +1095,11 @@ function onClick(event){
     }
 
     if (intersectObject !== ""){
+        audioManager.playSound('interact', 0.7)
         showModal(intersectObject)
+    }
+    else{
+        audioManager.playSound('click', 0.5)
     }
 }
 
