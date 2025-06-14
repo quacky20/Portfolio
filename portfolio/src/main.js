@@ -409,8 +409,6 @@ document.getElementById('key-toggle').addEventListener('change', (e) => {
 
 document.getElementById('sound-toggle').addEventListener('change', (e) => {
     initAudioOnInteraction();
-    const isMuted = audioManager.toggleMute();
-    document.getElementById('mute-btn').textContent = isMuted ? '🔇' : '🔊';
     audioManager.playSound('click', 0.5);
 })
 
