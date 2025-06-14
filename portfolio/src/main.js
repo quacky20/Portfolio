@@ -298,18 +298,18 @@ const modalContent = {
         link: "https://github.com/quacky20/AirDraw"
 
     },
-    "Project_3":{
-        title: "Project 3",
-        content: "To be added!",
-        linkText: "Will add later!",
-        link: "#"
+    "P3":{
+        title: "SynthCode – AI-Powered Collaborative Code Editor",
+        content: "I built the AI engine for SynthCode — a real-time collaborative editor — using Flask and Hugging Face models. The backend powers smart features like code auto-completion, syntax error correction, docstring generation, and snippet suggestions. Designed for multiple languages with a focus on speed, accuracy, and seamless integration into the editor’s workflow.",
+        linkText: "Visit SynthCode on GitHub",
+        link: "https://github.com/quacky20/synthcode"
 
     },
-    "Project_4":{
-        title: "Project 4",
-        content: "To be added!",
-        linkText: "Will add later!",
-        link: "#"
+    "P4":{
+        title: "Simple RNN – Built from the Ground Up",
+        content: "A fully custom Recurrent Neural Network implemented using only NumPy — designed to learn time series patterns with support for Tanh activation, gradient descent with momentum, and dynamic visualization. Great for understanding the core mechanics of RNNs without any black-box magic.",
+        linkText: "Visit project on GitHub",
+        link: "https://github.com/quacky20/RNN"
 
     },
     "Project_5":{
@@ -321,8 +321,6 @@ const modalContent = {
     "Skill_5":{
         title: "Skills",
         linkText: "Visit",
-        content: "All skills"
-
     },
     "Character_2":{
         title: "You are SO annoying!"
@@ -348,6 +346,45 @@ const modalExitButton = document.querySelector("#modal-exit-button")
 const modalVisitButton = document.querySelector("#modal-visit-button")
 
 function showModal(id){
+    if(id === "Skill_5"){
+        audioManager.playSound('modal_open', 0.6)
+
+        modalTitle.textContent = "Skills"
+        modalDescription.textContent = ""
+        modalDescription.innerHTML = `
+            <div>
+                <h3 class="font-semibold text-white mb-1">Languages</h3>
+                <p class="text-white/90">Python, C, C++, JavaScript</p>
+            </div>
+            <div>
+                <h3 class="font-semibold text-white mb-1">Frameworks & Libraries</h3>
+                <p class="text-white/90">React.js, FastAPI, Flask, OpenCV, Tkinter, Tailwind CSS</p>
+            </div>
+            <div>
+                <h3 class="font-semibold text-white mb-1">AI/ML Tools</h3>
+                <p class="text-white/90">TensorFlow, PyTorch, LangChain</p>
+            </div>
+            <div>
+                <h3 class="font-semibold text-white mb-1">Data Science</h3>
+                <p class="text-white/90">NumPy, Pandas, Matplotlib, Scikit-learn</p>
+            </div>
+            <div>
+                <h3 class="font-semibold text-white mb-1">Concepts</h3>
+                <p class="text-white/90">Data Structures & Algorithms, Object-Oriented Programming, Operating Systems, Computer Vision, NLP, Neural Networks (CNNs), AI, Machine Learning</p>
+            </div>
+            <div>
+                <h3 class="font-semibold text-white mb-1">Other Skills</h3>
+                <p class="text-white/90">Git, HTML/CSS, REST APIs, Web Development (Full Stack)</p>
+            </div>
+        `
+        modalVisitButton.href = "https://www.linkedin.com/in/arman-bhattacharjee/"
+        modalVisitButton.classList.remove('hidden')
+        modalVisitButton.textContent = "Visit my LinkedIn"
+        modal.classList.remove("opacity-0", "invisible", "pointer-events-none");
+        modal.classList.add("opacity-100", "visible", "pointer-events-auto");
+        return
+    }
+
     const content = modalContent[id]
     if (content){
         audioManager.playSound('modal_open', 0.6)
@@ -769,7 +806,7 @@ loadingManager.onLoad = function(){
 
 const loader = new GLTFLoader(loadingManager);
 
-loader.load( 'Portfolio7.glb', function ( glb ) {
+loader.load( 'Portfolio.glb', function ( glb ) {
     glb.scene.traverse((child) => {
         if(intersectObjectsNames.includes(child.name)){
             intersectObjects.push(child)
@@ -1088,6 +1125,7 @@ function onClick(event){
 
     if (intersectObject !== ""){
         audioManager.playSound('interact', 0.7)
+        // console.log(intersectObject)
         showModal(intersectObject)
     }
     else{
