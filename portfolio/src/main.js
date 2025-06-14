@@ -21,13 +21,13 @@ class AudioManager {
         this.audioFiles = {
             background: '../audio/ambient-background.mp3',
 
-            click: '../audio/click.mp3',
-            jump: '../audio/jump-edited.mp3',
+            click: '/audio/click.mp3',
+            jump: '/audio/jump-edited.mp3',
             land: null,
-            interact: '../audio/interact.mp3',
-            modal_open: '../audio/modal-open.mp3',
-            modal_close: '../audio/modal-close.mp3',
-            dog_jump: '../audio/dog-jump.mp3'
+            interact: '/audio/interact.mp3',
+            modal_open: '/audio/modal-open.mp3',
+            modal_close: '/audio/modal-close.mp3',
+            dog_jump: '/audio/dog-jump.mp3'
         }
     }
 
