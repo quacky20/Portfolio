@@ -1,4 +1,4 @@
-const CACHE_NAME = `site-static-${Date.now()}`;
+const CACHE_NAME = 'site-static-v1'
 
 self.addEventListener('install', (e) => {
   e.waitUntil(
@@ -20,6 +20,7 @@ self.addEventListener('activate', (e) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
           if (cacheName !== CACHE_NAME) {
+            console.log('Deleting old cache:', cacheName);
             return caches.delete(cacheName);
           }
         })
