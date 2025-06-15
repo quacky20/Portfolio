@@ -1,6 +1,6 @@
-# 🎮 My Interactive Portfolio
+# Arman's VoxelVerse - An Interactive Portfolio
 
-Welcome to my developer portfolio — a playful and immersive pixel-style experience built with **HTML**, **CSS**, **JavaScript**, and **Three.js**. Inspired by retro games, this site lets you explore my world of skills and projects through movement, interaction, and sound.
+Welcome to VoxelVerse — a playful and immersive pixel-style experience built with **HTML**, **CSS**, **JavaScript**, and **Three.js**. Inspired by retro games, this site lets you explore my world of skills and projects through movement, interaction, and sound.
 
  🛸 Not just a portfolio — an experience.
 
